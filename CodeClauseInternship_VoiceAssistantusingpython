@@ -1,0 +1,58 @@
+pip install SpeechRecognition pyttsx3
+import speech_recognition as sr
+
+def listen():
+    recognizer = sr.Recognizer()
+    with sr.Microphone() as source:
+        print("Listening...")
+        audio = recognizer.listen(source)
+        
+    try:
+        print("Recognizing...")
+        query = recognizer.recognize_google(audio)
+        print("User said:", query)
+        return query
+    except sr.UnknownValueError:
+        print("Sorry, I didn't understand that.")
+        return ""
+import warnings
+warnings.filterwarnings("ignore")
+import nltk
+from nltk.corpus import stopwords
+from nltk.tokenize import word_tokenize
+
+nltk.download('punkt')
+nltk.download('stopwords')
+
+def process_query(query):
+    stop_words = set(stopwords.words('english'))
+    words = word_tokenize(query)
+    filtered_words = [word for word in words if word.lower() not in stop_words]
+    processed_query = ' '.join(filtered_words)
+    return processed_query
+import pyttsx3
+
+def speak(response):
+    engine = pyttsx3.init()
+    engine.say(response)
+    engine.runAndWait()
+if __name__ == "__main__":
+    while True:
+        user_input = listen()
+        processed_input = process_query(user_input)
+        
+        if "hello" in processed_input:
+            response = "Hello there!How was the day."
+        elif "What is your name" in processed_input:
+            response = "I am your Friendly assisstant."
+        elif "can you help me" in processed_input:
+            response = "Of course!I do."
+        elif "thank you" in processed_input:
+            response = "Your Welcome!"
+        elif "goodbye" in processed_input:
+            response = "Goodbye! Have a great day."
+        else:
+            response = "I'm not sure how to respond to that."
+            
+        print("Assistant:", response)
+        speak(response)
